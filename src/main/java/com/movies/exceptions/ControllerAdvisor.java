@@ -16,8 +16,10 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ControllerAdvisor {
+
     @ExceptionHandler(DuplicateEntityException.class)
     public ResponseEntity<Object> handleDuplicateEntityException(DuplicateEntityException exception) {
+
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", exception.getMessage());
@@ -35,11 +37,41 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpStatus status) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ActorAlreadyAddedToMovieException.class)
+    public ResponseEntity<Object> handleActorAlreadyAddedToMovieException(ActorAlreadyAddedToMovieException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ActorNotInMovieException.class)
+    public ResponseEntity<Object> handleActorNotInMovieException(ActorNotInMovieException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDate.now());
-        body.put("status", status.value());
 
         List<String> errors = exception.getBindingResult()
                 .getFieldErrors()
@@ -48,6 +80,7 @@ public class ControllerAdvisor {
                 .collect(Collectors.toList());
 
         body.put("errors", errors);
+
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

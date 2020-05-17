@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,12 +20,11 @@ public class MovieGenreService {
     private MovieGenreRepository movieGenreRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
-
-    public List<MovieGenreDto> getAllMovieGenres() {
-        List<MovieGenreDto> genres = ((List<MovieGenre>) movieGenreRepository.findAll())
+    public Set<MovieGenreDto> getAllMovieGenres() {
+        Set<MovieGenreDto> genres = ((List<MovieGenre>) movieGenreRepository.findAll())
                 .stream()
                 .map(movieGenre -> modelMapper.map(movieGenre, MovieGenreDto.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         if (genres.size() == 0) {
             throw new NoDataFoundException();

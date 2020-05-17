@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Range;
 
 @NoArgsConstructor
 @Getter
@@ -14,6 +15,7 @@ import lombok.ToString;
 public class MovieDto {
     private Long id;
     private String title;
+    @Range(min = 1800, max = 2024)
     private Long releaseYear;
     private MovieGenreDto genre;
 }

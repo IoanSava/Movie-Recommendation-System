@@ -7,16 +7,14 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/actors")
-@Validated
 public class ActorController {
     @Autowired
     private ActorService actorService;
@@ -24,8 +22,8 @@ public class ActorController {
     @GetMapping
     @ApiOperation(value = "Retrieve all actors",
             response = ActorDto.class,
-            responseContainer = "List")
-    public List<ActorDto> getAllActors() {
+            responseContainer = "Set")
+    public Set<ActorDto> getAllActors() {
         return actorService.getAllActors();
     }
 
@@ -50,5 +48,14 @@ public class ActorController {
                                               @PathVariable @Valid @Min(0) Long id) {
         actorService.deleteActor(id);
         return new ResponseEntity<>("Actor deleted", HttpStatus.OK);
+    }
+
+    @GetMapping("/movie/{id}")
+    @ApiOperation(value = "Retrieve all actors from a specified movie",
+            response = ActorDto.class,
+            responseContainer = "Set")
+    public Set<ActorDto> getAllActorsFromMovie(@ApiParam(value = "id of the movie", required = true)
+                                               @PathVariable @Valid @Min(0) Long id) {
+        return actorService.getActorsFromMovie(id);
     }
 }

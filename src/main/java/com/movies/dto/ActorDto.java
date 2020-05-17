@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Range;
 
 @NoArgsConstructor
 @Getter
@@ -14,5 +15,6 @@ import lombok.ToString;
 public class ActorDto {
     private Long id;
     private String name;
+    @Range(min = 1, max = 120)
     private Long age;
 }

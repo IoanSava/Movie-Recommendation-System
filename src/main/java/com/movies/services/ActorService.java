@@ -1,31 +1,35 @@
 package com.movies.services;
 
-
 import com.movies.dto.ActorDto;
 import com.movies.entities.Actor;
+import com.movies.entities.Movie;
 import com.movies.exceptions.DuplicateEntityException;
 import com.movies.exceptions.EntityNotFoundException;
 import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.ActorRepository;
+import com.movies.repositories.MovieRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ActorService {
     @Autowired
     private ActorRepository actorRepository;
+    @Autowired
+    private MovieRepository movieRepository;
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public List<ActorDto> getAllActors() {
-        List<ActorDto> actors = ((List<Actor>) actorRepository.findAll())
+    public Set<ActorDto> getAllActors() {
+        Set<ActorDto> actors = ((List<Actor>) actorRepository.findAll())
                 .stream()
                 .map(actor -> modelMapper.map(actor, ActorDto.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         if (actors.size() == 0) {
             throw new NoDataFoundException();
@@ -59,5 +63,20 @@ public class ActorService {
             throw new EntityNotFoundException("Actor", id);
         }
         actorRepository.deleteById(id);
+    }
+
+    public Set<ActorDto> getActorsFromMovie(Long movieId) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
+
+        Set<ActorDto> actors = movie.getActors()
+                .stream()
+                .map(actor -> modelMapper.map(actor, ActorDto.class))
+                .collect(Collectors.toSet());
+
+        if (actors.size() == 0) {
+            throw new NoDataFoundException();
+        }
+
+        return actors;
     }
 }
