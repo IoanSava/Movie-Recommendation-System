@@ -1,10 +1,10 @@
 package com.movies.entities;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -22,7 +22,6 @@ public class Movie {
     @NotNull(message = "title cannot be null")
     private String title;
 
-    @Range(min = 1800, max = 2024)
     @NotNull(message = "releaseYear cannot be null")
     private Long releaseYear;
 
@@ -30,7 +29,15 @@ public class Movie {
     @JoinColumn(name = "genre_id", nullable = false)
     private MovieGenre genre;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "movie_actors", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "actor_id"))
-    private Set<Actor> actors;
+    private Set<Actor> actors = new HashSet<>();
+
+    public void addActor(Actor actor) {
+        actors.add(actor);
+    }
+
+    public void removeActor(Actor actor) {
+        actors.remove(actor);
+    }
 }

@@ -1,10 +1,10 @@
 package com.movies.entities;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -22,10 +22,17 @@ public class Actor {
     @NotNull(message = "name cannot be null")
     private String name;
 
-    @Range(min = 1, max = 120)
     @NotNull(message = "age cannot be null")
     private Long age;
 
     @ManyToMany(mappedBy = "actors")
-    private Set<Movie> movies;
+    private Set<Movie> movies = new HashSet<>();
+
+    public void addMovie(Movie movie) {
+        movies.add(movie);
+    }
+
+    public void removeMovie(Movie movie) {
+        movies.remove(movie);
+    }
 }

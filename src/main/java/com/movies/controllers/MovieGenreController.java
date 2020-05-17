@@ -6,15 +6,13 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/genres")
-@Validated
 public class MovieGenreController {
     @Autowired
     MovieGenreService movieGenreService;
@@ -22,8 +20,8 @@ public class MovieGenreController {
     @GetMapping
     @ApiOperation(value = "Retrieve all genres",
             response = MovieGenreDto.class,
-            responseContainer = "List")
-    public List<MovieGenreDto> getAllMovieGenres() {
+            responseContainer = "Set")
+    public Set<MovieGenreDto> getAllMovieGenres() {
         return movieGenreService.getAllMovieGenres();
     }
 
