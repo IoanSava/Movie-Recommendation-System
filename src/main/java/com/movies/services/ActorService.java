@@ -9,7 +9,6 @@ import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +18,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class ActorService {
-    @Autowired
-    private ActorRepository actorRepository;
-    @Autowired
-    private MovieRepository movieRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ActorRepository actorRepository;
+    private final MovieRepository movieRepository;
+    private final ModelMapper modelMapper;
+
+    public ActorService(ActorRepository actorRepository, MovieRepository movieRepository) {
+        this.actorRepository = actorRepository;
+        this.movieRepository = movieRepository;
+        this.modelMapper = new ModelMapper();
+    }
 
     public Set<ActorDto> getAllActors() {
         Set<ActorDto> actors = ((List<Actor>) actorRepository.findAll())

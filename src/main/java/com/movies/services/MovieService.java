@@ -1,31 +1,36 @@
 package com.movies.services;
 
+import com.google.common.collect.Sets;
 import com.movies.dto.MovieDto;
 import com.movies.entities.Actor;
 import com.movies.entities.Movie;
 import com.movies.entities.MovieGenre;
 import com.movies.exceptions.*;
+import com.movies.graphs.Edge;
+import com.movies.graphs.Graph;
+import com.movies.graphs.Node;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieGenreRepository;
 import com.movies.repositories.MovieRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private ActorRepository actorRepository;
-    @Autowired
-    private MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final MovieRepository movieRepository;
+    private final ActorRepository actorRepository;
+    private final MovieGenreRepository movieGenreRepository;
+    private final ModelMapper modelMapper;
+
+    public MovieService(MovieRepository movieRepository, ActorRepository actorRepository, MovieGenreRepository movieGenreRepository) {
+        this.movieRepository = movieRepository;
+        this.actorRepository = actorRepository;
+        this.movieGenreRepository = movieGenreRepository;
+        this.modelMapper = new ModelMapper();
+    }
 
     public Set<MovieDto> getAllMovies() {
         Set<MovieDto> movies = ((List<Movie>) movieRepository.findAll())
@@ -119,5 +124,48 @@ public class MovieService {
 
         movie.removeActor(actor);
         movieRepository.save(movie);
+    }
+
+    private boolean haveSimilarities(Movie firstMovie, Movie secondMovie) {
+        return (firstMovie != secondMovie && (firstMovie.getGenre() == secondMovie.getGenre() ||
+                firstMovie.getReleaseYear().equals(secondMovie.getReleaseYear()) ||
+                !Sets.intersection(firstMovie.getActors(), secondMovie.getActors()).isEmpty()));
+    }
+
+    private Graph buildGraphFromMovies(List<Movie> movies) {
+        Graph graph = new Graph();
+        int numberOfMovies = movies.size();
+
+        for (int i = 0; i < numberOfMovies - 1; ++i) {
+            for (int j = i + 1; j < numberOfMovies; ++j) {
+                Movie firstMovie = movies.get(i);
+                Movie secondMovie = movies.get(j);
+                if (haveSimilarities(firstMovie, secondMovie)) {
+                    Edge edge = new Edge(new Node(firstMovie.getId()), new Node(secondMovie.getId()));
+                    graph.addEdge(edge);
+                }
+            }
+        }
+
+        return graph;
+    }
+
+    public Set<MovieDto> getMovieRecommendations() {
+        List<Movie> movies = new ArrayList<>(((List<Movie>) movieRepository.findAll()));
+        Graph graph = buildGraphFromMovies(movies);
+        Set<Node> nodes = graph.getVertexCover();
+
+        Set<MovieDto> recommendedMovies = new HashSet<>();
+        for (Node node : nodes) {
+            Long movieId = node.getValue();
+            Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
+            recommendedMovies.add(modelMapper.map(movie, MovieDto.class));
+        }
+
+        if (recommendedMovies.size() == 0) {
+            throw new NoDataFoundException();
+        }
+
+        return recommendedMovies;
     }
 }

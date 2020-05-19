@@ -4,7 +4,6 @@ import com.movies.dto.MovieDto;
 import com.movies.services.MovieService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,11 @@ import java.util.Set;
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
-    @Autowired
-    private MovieService movieService;
+    private final MovieService movieService;
+
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
+    }
 
     @GetMapping
     @ApiOperation(value = "Retrieve all movies",
@@ -50,7 +52,7 @@ public class MovieController {
         return new ResponseEntity<>("Movie deleted", HttpStatus.OK);
     }
 
-    @GetMapping("/actor/{id}")
+    @GetMapping("/actors/{id}")
     @ApiOperation(value = "Retrieve all movies of a specified actor",
             response = MovieDto.class,
             responseContainer = "Set")
@@ -59,7 +61,7 @@ public class MovieController {
         return movieService.getMoviesOfActor(id);
     }
 
-    @GetMapping("/genre/{id}")
+    @GetMapping("/genres/{id}")
     @ApiOperation(value = "Retrieve all movies of a specified genre",
             response = MovieDto.class,
             responseContainer = "Set")
@@ -68,7 +70,7 @@ public class MovieController {
         return movieService.getMoviesByGenre(id);
     }
 
-    @PostMapping("/{movieId}/actor/{actorId}")
+    @PostMapping("/{movieId}/actors/{actorId}")
     @ApiOperation(value = "Add an actor to a specified movie")
     public ResponseEntity<String> addActorToMovie(@ApiParam(value = "id of the movie", required = true)
                                                   @PathVariable @Valid @Min(0) Long movieId,
@@ -78,7 +80,7 @@ public class MovieController {
         return new ResponseEntity<>("Actor added to movie", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{movieId}/actor/{actorId}")
+    @DeleteMapping("/{movieId}/actors/{actorId}")
     @ApiOperation(value = "Remove an actor from a specified movie")
     public ResponseEntity<String> removeActorFromMovie(@ApiParam(value = "id of the movie", required = true)
                                                        @PathVariable @Valid @Min(0) Long movieId,
@@ -86,5 +88,13 @@ public class MovieController {
                                                        @PathVariable @Valid @Min(0) Long actorId) {
         movieService.removeActorFromMovie(movieId, actorId);
         return new ResponseEntity<>("Actor removed from movie", HttpStatus.OK);
+    }
+
+    @GetMapping("/recommendations")
+    @ApiOperation(value = "Retrieve a list of recommended movies",
+            response = MovieDto.class,
+            responseContainer = "Set")
+    public Set<MovieDto> getRecommendedMovies() {
+        return movieService.getMovieRecommendations();
     }
 }

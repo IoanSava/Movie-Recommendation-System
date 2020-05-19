@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 
 public interface ActorRepository extends CrudRepository<Actor, Long> {
-    Actor findByName(String name);
-
     @Transactional
     @Modifying
     @Query("update Actor a set a.name = :name where a.id = :id")

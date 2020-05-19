@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -28,11 +29,16 @@ public class Actor {
     @ManyToMany(mappedBy = "actors")
     private Set<Movie> movies = new HashSet<>();
 
-    public void addMovie(Movie movie) {
-        movies.add(movie);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Actor actor = (Actor) o;
+        return Objects.equals(id, actor.id);
     }
 
-    public void removeMovie(Movie movie) {
-        movies.remove(movie);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

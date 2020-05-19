@@ -4,7 +4,6 @@ import com.movies.dto.ActorDto;
 import com.movies.services.ActorService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,11 @@ import java.util.Set;
 @RestController
 @RequestMapping("/actors")
 public class ActorController {
-    @Autowired
-    private ActorService actorService;
+    private final ActorService actorService;
+
+    public ActorController(ActorService actorService) {
+        this.actorService = actorService;
+    }
 
     @GetMapping
     @ApiOperation(value = "Retrieve all actors",
@@ -50,7 +52,7 @@ public class ActorController {
         return new ResponseEntity<>("Actor deleted", HttpStatus.OK);
     }
 
-    @GetMapping("/movie/{id}")
+    @GetMapping("/movies/{id}")
     @ApiOperation(value = "Retrieve all actors from a specified movie",
             response = ActorDto.class,
             responseContainer = "Set")
