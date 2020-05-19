@@ -5,13 +5,17 @@ import lombok.*;
 
 import java.util.*;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
-@ToString
 public class Graph {
-    private List<Edge> edges = new ArrayList<>();
+    private final List<Edge> edges;
+
+    public Graph() {
+        edges = new ArrayList<>();
+    }
+
+    public Graph(List<Edge> edges) {
+        this.edges = new ArrayList<>(edges);
+    }
 
     public void addEdge(Edge edge) {
         if (edges.contains(edge)) {
@@ -60,7 +64,7 @@ public class Graph {
     private void removeEdgesWhichContainsNode(List<Edge> edges, Node node) {
         List<Edge> removedEdges = new ArrayList<>();
         for (Edge edge : edges) {
-            if (edge.getFirstNode() == node || edge.getSecondNode() == node) {
+            if (edge.getFirstNode().equals(node) || edge.getSecondNode().equals(node)) {
                 removedEdges.add(edge);
             }
         }

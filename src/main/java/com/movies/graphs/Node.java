@@ -1,18 +1,13 @@
 package com.movies.graphs;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
-@Setter
-@ToString
 public class Node {
-    private Long value;
+    private final long value;
 
     @Override
     public boolean equals(Object o) {
