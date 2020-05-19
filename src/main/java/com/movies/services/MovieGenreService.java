@@ -6,7 +6,6 @@ import com.movies.exceptions.DuplicateEntityException;
 import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.MovieGenreRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class MovieGenreService {
-    @Autowired
-    private MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final MovieGenreRepository movieGenreRepository;
+    private final ModelMapper modelMapper;
+
+    public MovieGenreService(MovieGenreRepository movieGenreRepository) {
+        this.movieGenreRepository = movieGenreRepository;
+        this.modelMapper = new ModelMapper();
+    }
 
     public Set<MovieGenreDto> getAllMovieGenres() {
         Set<MovieGenreDto> genres = ((List<MovieGenre>) movieGenreRepository.findAll())

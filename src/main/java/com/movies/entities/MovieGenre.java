@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -24,4 +25,17 @@ public class MovieGenre {
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "genre")
     private Set<Movie> movies;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MovieGenre that = (MovieGenre) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

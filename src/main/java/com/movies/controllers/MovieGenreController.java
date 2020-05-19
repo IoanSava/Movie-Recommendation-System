@@ -3,7 +3,6 @@ package com.movies.controllers;
 import com.movies.dto.MovieGenreDto;
 import com.movies.services.MovieGenreService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,11 @@ import java.util.Set;
 @RestController
 @RequestMapping("/genres")
 public class MovieGenreController {
-    @Autowired
-    MovieGenreService movieGenreService;
+    private final MovieGenreService movieGenreService;
+
+    public MovieGenreController(MovieGenreService movieGenreService) {
+        this.movieGenreService = movieGenreService;
+    }
 
     @GetMapping
     @ApiOperation(value = "Retrieve all genres",
