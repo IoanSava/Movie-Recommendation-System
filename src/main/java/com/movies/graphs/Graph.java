@@ -38,6 +38,10 @@ public class Graph {
         return nodes;
     }
 
+    /**
+     * @return the node with the maximum degree
+     * among the given edges
+     */
     private Node getMaxDegree(List<Edge> edges) {
         int maximumDegree = 0;
         Node maxDegreeNode = null;
@@ -74,6 +78,14 @@ public class Graph {
         }
     }
 
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Vertex_cover">Vertex cover</a>
+     *
+     * @return a set of vertices which forms a vertex cover
+     * for the current graph (a set of vertices
+     * that includes at least
+     * one endpoint of every edge of the graph)
+     */
     public Set<Node> getVertexCover() {
         List<Edge> edges = this.getEdges();
         List<Node> nodes = this.getNodes();

@@ -126,12 +126,22 @@ public class MovieService {
         movieRepository.save(movie);
     }
 
+    /**
+     * @return true if the given movies have at least one thing in common
+     * (the genre, the release year or an actor)
+     */
     private boolean haveSimilarities(Movie firstMovie, Movie secondMovie) {
         return (firstMovie != secondMovie && (firstMovie.getGenre() == secondMovie.getGenre() ||
                 firstMovie.getReleaseYear().equals(secondMovie.getReleaseYear()) ||
                 !Sets.intersection(firstMovie.getActors(), secondMovie.getActors()).isEmpty()));
     }
 
+    /**
+     * Building a graph based on a set of movies.
+     * A movie is represented by a node in this graph.
+     * Two nodes are joined by an edge if
+     * the corresponding movies have at least one thing in common.
+     */
     private Graph buildGraphFromMovies(List<Movie> movies) {
         Graph graph = new Graph();
         int numberOfMovies = movies.size();
@@ -150,6 +160,11 @@ public class MovieService {
         return graph;
     }
 
+    /**
+     * @return a list of various movies recommendations based on
+     * the similarities of existing movies (a vertex cover of the
+     * corresponding graph)
+     */
     public Set<MovieDto> getMovieRecommendations() {
         List<Movie> movies = new ArrayList<>(((List<Movie>) movieRepository.findAll()));
         Graph graph = buildGraphFromMovies(movies);
