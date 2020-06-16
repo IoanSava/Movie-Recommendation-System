@@ -83,4 +83,15 @@ public class ControllerAdvisor {
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    // handler for generic exceptions
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleGenericException(RuntimeException exception) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }
