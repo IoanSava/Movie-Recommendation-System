@@ -5,6 +5,7 @@ import com.movies.entities.MovieGenre;
 import com.movies.exceptions.DuplicateEntityException;
 import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.MovieGenreRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MovieGenreService {
     private final MovieGenreRepository movieGenreRepository;
@@ -45,6 +47,7 @@ public class MovieGenreService {
         if (movieGenreId != null && checkIfMovieGenreExists(movieGenreId)) {
             throw new DuplicateEntityException("MovieGenre", movieGenreId);
         }
+        log.debug("New genre added");
         movieGenreRepository.save(modelMapper.map(movieGenreDto, MovieGenre.class));
     }
 }
