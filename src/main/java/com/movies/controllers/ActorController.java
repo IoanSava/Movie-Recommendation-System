@@ -13,7 +13,7 @@ import javax.validation.constraints.Min;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/actors")
+@RequestMapping("/actors/")
 public class ActorController {
     private final ActorService actorService;
 
@@ -36,7 +36,7 @@ public class ActorController {
         return new ResponseEntity<>("Actor added", HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     @ApiOperation(value = "Update an existing actor name")
     public ResponseEntity<String> updateActorName(@ApiParam(value = "id of the actor you want to update", required = true)
                                                   @PathVariable @Valid @Min(0) Long id, @RequestParam String name) {
@@ -44,7 +44,7 @@ public class ActorController {
         return new ResponseEntity<>("Actor name updated", HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     @ApiOperation(value = "Delete an actor")
     public ResponseEntity<String> deleteActor(@ApiParam(value = "id of the actor you want to delete", required = true)
                                               @PathVariable @Valid @Min(0) Long id) {
@@ -52,7 +52,7 @@ public class ActorController {
         return new ResponseEntity<>("Actor deleted", HttpStatus.OK);
     }
 
-    @GetMapping("/movies/{id}")
+    @GetMapping("movies/{id}")
     @ApiOperation(value = "Retrieve all actors from a specified movie",
             response = ActorDto.class,
             responseContainer = "Set")
