@@ -5,45 +5,43 @@ import com.movies.entities.Actor;
 import com.movies.entities.Movie;
 import com.movies.exceptions.DuplicateEntityException;
 import com.movies.exceptions.EntityNotFoundException;
-import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ActorService {
     private final ActorRepository actorRepository;
     private final MovieRepository movieRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public ActorService(ActorRepository actorRepository, MovieRepository movieRepository) {
         this.actorRepository = actorRepository;
         this.movieRepository = movieRepository;
-        this.modelMapper = new ModelMapper();
     }
 
-    public Set<ActorDto> getAllActors() {
-        Set<ActorDto> actors = ((List<Actor>) actorRepository.findAll())
+    public List<ActorDto> getAllActors() {
+        return actorRepository.findAll()
                 .stream()
                 .map(actor -> modelMapper.map(actor, ActorDto.class))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+    }
 
-        if (actors.size() == 0) {
-            throw new NoDataFoundException();
-        }
+    public List<ActorDto> getActorsFromMovie(Long movieId) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
 
-        return actors;
+        return movie.getActors()
+                .stream()
+                .map(actor -> modelMapper.map(actor, ActorDto.class))
+                .collect(Collectors.toList());
     }
 
     private boolean checkIfActorExists(Long id) {
-        Optional<Actor> actor = actorRepository.findById(id);
-        return actor.isPresent();
+        return actorRepository.findById(id).isPresent();
     }
 
     public void addActor(ActorDto actorDto) {
@@ -66,20 +64,5 @@ public class ActorService {
             throw new EntityNotFoundException("Actor", id);
         }
         actorRepository.deleteById(id);
-    }
-
-    public Set<ActorDto> getActorsFromMovie(Long movieId) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
-
-        Set<ActorDto> actors = movie.getActors()
-                .stream()
-                .map(actor -> modelMapper.map(actor, ActorDto.class))
-                .collect(Collectors.toSet());
-
-        if (actors.size() == 0) {
-            throw new NoDataFoundException();
-        }
-
-        return actors;
     }
 }

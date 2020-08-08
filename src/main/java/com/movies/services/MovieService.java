@@ -23,31 +23,23 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final ActorRepository actorRepository;
     private final MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public MovieService(MovieRepository movieRepository, ActorRepository actorRepository, MovieGenreRepository movieGenreRepository) {
         this.movieRepository = movieRepository;
         this.actorRepository = actorRepository;
         this.movieGenreRepository = movieGenreRepository;
-        this.modelMapper = new ModelMapper();
     }
 
-    public Set<MovieDto> getAllMovies() {
-        Set<MovieDto> movies = ((List<Movie>) movieRepository.findAll())
+    public List<MovieDto> getAllMovies() {
+        return movieRepository.findAll()
                 .stream()
                 .map(movie -> modelMapper.map(movie, MovieDto.class))
-                .collect(Collectors.toSet());
-
-        if (movies.size() == 0) {
-            throw new NoDataFoundException();
-        }
-
-        return movies;
+                .collect(Collectors.toList());
     }
 
     private boolean checkIfMovieExists(Long id) {
-        Optional<Movie> movie = movieRepository.findById(id);
-        return movie.isPresent();
+        return movieRepository.findById(id).isPresent();
     }
 
     public void addMovie(MovieDto movieDto) {
@@ -72,34 +64,22 @@ public class MovieService {
         movieRepository.deleteById(id);
     }
 
-    public Set<MovieDto> getMoviesOfActor(Long actorId) {
+    public List<MovieDto> getMoviesOfActor(Long actorId) {
         Actor actor = actorRepository.findById(actorId).orElseThrow(() -> new EntityNotFoundException("Actor", actorId));
 
-        Set<MovieDto> movies = actor.getMovies()
+        return actor.getMovies()
                 .stream()
                 .map(movie -> modelMapper.map(movie, MovieDto.class))
-                .collect(Collectors.toSet());
-
-        if (movies.size() == 0) {
-            throw new NoDataFoundException();
-        }
-
-        return movies;
+                .collect(Collectors.toList());
     }
 
-    public Set<MovieDto> getMoviesByGenre(Long genreId) {
+    public List<MovieDto> getMoviesByGenre(Long genreId) {
         MovieGenre movieGenre = movieGenreRepository.findById(genreId).orElseThrow(() -> new EntityNotFoundException("MovieGenre", genreId));
 
-        Set<MovieDto> movies = movieGenre.getMovies()
+        return movieGenre.getMovies()
                 .stream()
                 .map(movie -> modelMapper.map(movie, MovieDto.class))
-                .collect(Collectors.toSet());
-
-        if (movies.size() == 0) {
-            throw new NoDataFoundException();
-        }
-
-        return movies;
+                .collect(Collectors.toList());
     }
 
     public void addActorToMovie(Long movieId, Long actorId) {
@@ -165,20 +145,15 @@ public class MovieService {
      * the similarities of existing movies (a vertex cover of the
      * corresponding graph)
      */
-    public Set<MovieDto> getMovieRecommendations() {
-        List<Movie> movies = new ArrayList<>(((List<Movie>) movieRepository.findAll()));
-        Graph graph = buildGraphFromMovies(movies);
+    public List<MovieDto> getMovieRecommendations() {
+        Graph graph = buildGraphFromMovies(movieRepository.findAll());
         Set<Node> nodes = graph.getVertexCover();
 
-        Set<MovieDto> recommendedMovies = new HashSet<>();
+        List<MovieDto> recommendedMovies = new ArrayList<>();
         for (Node node : nodes) {
             Long movieId = node.getValue();
             Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
             recommendedMovies.add(modelMapper.map(movie, MovieDto.class));
-        }
-
-        if (recommendedMovies.size() == 0) {
-            throw new NoDataFoundException();
         }
 
         return recommendedMovies;

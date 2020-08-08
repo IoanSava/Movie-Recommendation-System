@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.Set;
+import java.util.List;
 
 @RestController
-@RequestMapping("/actors/")
+@RequestMapping("actors")
 public class ActorController {
     private final ActorService actorService;
 
@@ -24,9 +24,18 @@ public class ActorController {
     @GetMapping
     @ApiOperation(value = "Retrieve all actors",
             response = ActorDto.class,
-            responseContainer = "Set")
-    public Set<ActorDto> getAllActors() {
+            responseContainer = "List")
+    public List<ActorDto> getAllActors() {
         return actorService.getAllActors();
+    }
+
+    @GetMapping("/movies/{id}")
+    @ApiOperation(value = "Retrieve all actors from a specified movie",
+            response = ActorDto.class,
+            responseContainer = "List")
+    public List<ActorDto> getAllActorsFromMovie(@ApiParam(value = "id of the movie", required = true)
+                                               @PathVariable @Valid @Min(0) Long id) {
+        return actorService.getActorsFromMovie(id);
     }
 
     @PostMapping
@@ -36,7 +45,7 @@ public class ActorController {
         return new ResponseEntity<>("Actor added", HttpStatus.CREATED);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @ApiOperation(value = "Update an existing actor name")
     public ResponseEntity<String> updateActorName(@ApiParam(value = "id of the actor you want to update", required = true)
                                                   @PathVariable @Valid @Min(0) Long id, @RequestParam String name) {
@@ -44,20 +53,11 @@ public class ActorController {
         return new ResponseEntity<>("Actor name updated", HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete an actor")
     public ResponseEntity<String> deleteActor(@ApiParam(value = "id of the actor you want to delete", required = true)
                                               @PathVariable @Valid @Min(0) Long id) {
         actorService.deleteActor(id);
         return new ResponseEntity<>("Actor deleted", HttpStatus.OK);
-    }
-
-    @GetMapping("movies/{id}")
-    @ApiOperation(value = "Retrieve all actors from a specified movie",
-            response = ActorDto.class,
-            responseContainer = "Set")
-    public Set<ActorDto> getAllActorsFromMovie(@ApiParam(value = "id of the movie", required = true)
-                                               @PathVariable @Valid @Min(0) Long id) {
-        return actorService.getActorsFromMovie(id);
     }
 }

@@ -3,43 +3,33 @@ package com.movies.services;
 import com.movies.dto.MovieGenreDto;
 import com.movies.entities.MovieGenre;
 import com.movies.exceptions.DuplicateEntityException;
-import com.movies.exceptions.NoDataFoundException;
 import com.movies.repositories.MovieGenreRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class MovieGenreService {
     private final MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public MovieGenreService(MovieGenreRepository movieGenreRepository) {
         this.movieGenreRepository = movieGenreRepository;
-        this.modelMapper = new ModelMapper();
     }
 
-    public Set<MovieGenreDto> getAllMovieGenres() {
-        Set<MovieGenreDto> genres = ((List<MovieGenre>) movieGenreRepository.findAll())
+    public List<MovieGenreDto> getAllMovieGenres() {
+        return movieGenreRepository.findAll()
                 .stream()
                 .map(movieGenre -> modelMapper.map(movieGenre, MovieGenreDto.class))
-                .collect(Collectors.toSet());
-
-        if (genres.size() == 0) {
-            throw new NoDataFoundException();
-        }
-        return genres;
+                .collect(Collectors.toList());
     }
 
     private boolean checkIfMovieGenreExists(Long id) {
-        Optional<MovieGenre> movieGenre = movieGenreRepository.findById(id);
-        return movieGenre.isPresent();
+        return movieGenreRepository.findById(id).isPresent();
     }
 
     public void addMovieGenre(MovieGenreDto movieGenreDto) {

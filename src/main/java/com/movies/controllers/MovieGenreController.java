@@ -8,10 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @RestController
-@RequestMapping("/genres")
+@RequestMapping("genres")
 public class MovieGenreController {
     private final MovieGenreService movieGenreService;
 
@@ -22,8 +22,8 @@ public class MovieGenreController {
     @GetMapping
     @ApiOperation(value = "Retrieve all genres",
             response = MovieGenreDto.class,
-            responseContainer = "Set")
-    public Set<MovieGenreDto> getAllMovieGenres() {
+            responseContainer = "List")
+    public List<MovieGenreDto> getAllMovieGenres() {
         return movieGenreService.getAllMovieGenres();
     }
 

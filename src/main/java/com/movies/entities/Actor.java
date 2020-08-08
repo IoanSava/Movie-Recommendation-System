@@ -4,9 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,18 +26,5 @@ public class Actor {
     private Long age;
 
     @ManyToMany(mappedBy = "actors")
-    private Set<Movie> movies = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Actor actor = (Actor) o;
-        return Objects.equals(id, actor.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    private List<Movie> movies = new ArrayList<>();
 }
