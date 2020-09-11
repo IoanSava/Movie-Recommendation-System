@@ -4,9 +4,18 @@ import com.movies.dto.MovieDto;
 import com.movies.services.MovieService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -14,12 +23,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("movies")
+@RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
-
-    public MovieController(MovieService movieService) {
-        this.movieService = movieService;
-    }
 
     @GetMapping
     @ApiOperation(value = "Retrieve all movies",
@@ -31,25 +37,28 @@ public class MovieController {
 
     @PostMapping
     @ApiOperation(value = "Add a new movie")
-    public ResponseEntity<String> addMovie(@RequestBody @Valid MovieDto movieDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String addMovie(@RequestBody @Valid MovieDto movieDto) {
         movieService.addMovie(movieDto);
-        return new ResponseEntity<>("Movie added", HttpStatus.CREATED);
+        return "Movie added";
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Update an existing movie title")
-    public ResponseEntity<String> updateMovieTitle(@ApiParam(value = "id of the movie you want to update", required = true)
-                                                   @PathVariable @Valid @Min(0) Long id, @RequestParam String title) {
+    @ResponseStatus(HttpStatus.OK)
+    public String updateMovieTitle(@ApiParam(value = "id of the movie to update", required = true)
+                                   @PathVariable @Valid @Min(0) Long id, @RequestParam String title) {
         movieService.updateMovieTitle(id, title);
-        return new ResponseEntity<>("Movie title updated", HttpStatus.OK);
+        return "Movie title updated";
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete a movie")
-    public ResponseEntity<String> deleteMovie(@ApiParam(value = "id of the movie you want to delete", required = true)
-                                              @PathVariable @Valid @Min(0) Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteMovie(@ApiParam(value = "id of the movie to delete", required = true)
+                              @PathVariable @Valid @Min(0) Long id) {
         movieService.deleteMovie(id);
-        return new ResponseEntity<>("Movie deleted", HttpStatus.OK);
+        return "Movie deleted";
     }
 
     @GetMapping("/actors/{id}")
@@ -57,7 +66,7 @@ public class MovieController {
             response = MovieDto.class,
             responseContainer = "List")
     public List<MovieDto> getAllMoviesOfActor(@ApiParam(value = "id of the actor", required = true)
-                                             @PathVariable @Valid @Min(0) Long id) {
+                                              @PathVariable @Valid @Min(0) Long id) {
         return movieService.getMoviesOfActor(id);
     }
 
@@ -66,28 +75,30 @@ public class MovieController {
             response = MovieDto.class,
             responseContainer = "List")
     public List<MovieDto> getAllMoviesByGenre(@ApiParam(value = "id of the genre", required = true)
-                                             @PathVariable @Valid @Min(0) Long id) {
+                                              @PathVariable @Valid @Min(0) Long id) {
         return movieService.getMoviesByGenre(id);
     }
 
     @PostMapping("/{movieId}/actors/{actorId}")
     @ApiOperation(value = "Add an actor to a specified movie")
-    public ResponseEntity<String> addActorToMovie(@ApiParam(value = "id of the movie", required = true)
-                                                  @PathVariable @Valid @Min(0) Long movieId,
-                                                  @ApiParam(value = "id of the actor", required = true)
-                                                  @PathVariable @Valid @Min(0) Long actorId) {
+    @ResponseStatus(HttpStatus.OK)
+    public String addActorToMovie(@ApiParam(value = "id of the movie", required = true)
+                                  @PathVariable @Valid @Min(0) Long movieId,
+                                  @ApiParam(value = "id of the actor", required = true)
+                                  @PathVariable @Valid @Min(0) Long actorId) {
         movieService.addActorToMovie(movieId, actorId);
-        return new ResponseEntity<>("Actor added to movie", HttpStatus.OK);
+        return "Actor added to movie";
     }
 
     @DeleteMapping("/{movieId}/actors/{actorId}")
     @ApiOperation(value = "Remove an actor from a specified movie")
-    public ResponseEntity<String> removeActorFromMovie(@ApiParam(value = "id of the movie", required = true)
-                                                       @PathVariable @Valid @Min(0) Long movieId,
-                                                       @ApiParam(value = "id of the actor", required = true)
-                                                       @PathVariable @Valid @Min(0) Long actorId) {
+    @ResponseStatus(HttpStatus.OK)
+    public String removeActorFromMovie(@ApiParam(value = "id of the movie", required = true)
+                                       @PathVariable @Valid @Min(0) Long movieId,
+                                       @ApiParam(value = "id of the actor", required = true)
+                                       @PathVariable @Valid @Min(0) Long actorId) {
         movieService.removeActorFromMovie(movieId, actorId);
-        return new ResponseEntity<>("Actor removed from movie", HttpStatus.OK);
+        return "Actor removed from movie";
     }
 
     @GetMapping("/recommendations")

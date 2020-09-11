@@ -3,7 +3,6 @@ package com.movies.services;
 import com.movies.dto.ActorDto;
 import com.movies.entities.Actor;
 import com.movies.entities.Movie;
-import com.movies.exceptions.DuplicateEntityException;
 import com.movies.exceptions.EntityNotFoundException;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieRepository;
@@ -40,29 +39,17 @@ public class ActorService {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkIfActorExists(Long id) {
-        return actorRepository.findById(id).isPresent();
-    }
-
     public void addActor(ActorDto actorDto) {
-        Long actorId = actorDto.getId();
-        if (actorId != null && checkIfActorExists(actorId)) {
-            throw new DuplicateEntityException("Actor", actorId);
-        }
         actorRepository.save(modelMapper.map(actorDto, Actor.class));
     }
 
     public void updateActorName(Long id, String name) {
-        if (!checkIfActorExists(id)) {
-            throw new EntityNotFoundException("Actor", id);
-        }
+        actorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Actor", id));
         actorRepository.updateName(id, name);
     }
 
     public void deleteActor(Long id) {
-        if (!checkIfActorExists(id)) {
-            throw new EntityNotFoundException("Actor", id);
-        }
+        actorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Actor", id));
         actorRepository.deleteById(id);
     }
 }

@@ -5,7 +5,9 @@ import com.movies.dto.MovieDto;
 import com.movies.entities.Actor;
 import com.movies.entities.Movie;
 import com.movies.entities.MovieGenre;
-import com.movies.exceptions.*;
+import com.movies.exceptions.ActorAlreadyAddedToMovieException;
+import com.movies.exceptions.ActorNotInMovieException;
+import com.movies.exceptions.EntityNotFoundException;
 import com.movies.graphs.Edge;
 import com.movies.graphs.Graph;
 import com.movies.graphs.Node;
@@ -15,7 +17,9 @@ import com.movies.repositories.MovieRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,29 +42,17 @@ public class MovieService {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkIfMovieExists(Long id) {
-        return movieRepository.findById(id).isPresent();
-    }
-
     public void addMovie(MovieDto movieDto) {
-        Long movieId = movieDto.getId();
-        if (movieId != null && checkIfMovieExists(movieId)) {
-            throw new DuplicateEntityException("Movie", movieId);
-        }
         movieRepository.save(modelMapper.map(movieDto, Movie.class));
     }
 
     public void updateMovieTitle(Long id, String title) {
-        if (!checkIfMovieExists(id)) {
-            throw new EntityNotFoundException("Movie", id);
-        }
+        movieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Movie", id));
         movieRepository.updateTitle(id, title);
     }
 
     public void deleteMovie(Long id) {
-        if (!checkIfMovieExists(id)) {
-            throw new EntityNotFoundException("Movie", id);
-        }
+        movieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Movie", id));
         movieRepository.deleteById(id);
     }
 
@@ -111,7 +103,7 @@ public class MovieService {
      * (the genre, the release year or an actor)
      */
     private boolean haveSimilarities(Movie firstMovie, Movie secondMovie) {
-        return (firstMovie != secondMovie && (firstMovie.getGenre() == secondMovie.getGenre() ||
+        return (firstMovie != secondMovie && (firstMovie.getGenre().equals(secondMovie.getGenre()) ||
                 firstMovie.getReleaseYear().equals(secondMovie.getReleaseYear()) ||
                 !Sets.intersection(firstMovie.getActors(), secondMovie.getActors()).isEmpty()));
     }

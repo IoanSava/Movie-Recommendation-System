@@ -1,8 +1,7 @@
 # Movie Recommendation System
 
 
-Movie Recommendation REST API made using Spring Boot (with PostgresSQL Database), deployed on Heroku: 
-[Movie Recommendation Application](https://movie-recommendation-system-sf.herokuapp.com/swagger-ui.html#/)
+Movie Recommendation REST API made using Spring Boot (with PostgresSQL Database)
 
 :heavy_check_mark: Entities: **src/main/java/com/entities**
 

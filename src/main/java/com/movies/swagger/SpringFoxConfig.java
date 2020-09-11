@@ -30,12 +30,12 @@ public class SpringFoxConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "Movie Recommendation REST Services",
+                "Movies Recommendation REST Services",
                 "REST services for communicating with the database which contains" +
                         " information about movies",
                 "1.0",
                 "Terms of service",
-                new Contact("Ioan Sava", "www.mywebsite.com", "ioan.sava28@gmail.com"),
+                new Contact("Ioan Sava", "https://github.com/IoanSava", "ioan.sava28@gmail.com"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 }

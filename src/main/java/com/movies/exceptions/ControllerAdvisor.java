@@ -17,16 +17,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ControllerAdvisor {
 
-    @ExceptionHandler(DuplicateEntityException.class)
-    public ResponseEntity<Object> handleDuplicateEntityException(DuplicateEntityException exception) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", exception.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException exception) {
 

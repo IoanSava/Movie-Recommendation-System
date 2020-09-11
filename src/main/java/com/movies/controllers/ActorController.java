@@ -4,9 +4,18 @@ import com.movies.dto.ActorDto;
 import com.movies.services.ActorService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -14,12 +23,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("actors")
+@RequiredArgsConstructor
 public class ActorController {
     private final ActorService actorService;
-
-    public ActorController(ActorService actorService) {
-        this.actorService = actorService;
-    }
 
     @GetMapping
     @ApiOperation(value = "Retrieve all actors",
@@ -34,30 +40,33 @@ public class ActorController {
             response = ActorDto.class,
             responseContainer = "List")
     public List<ActorDto> getAllActorsFromMovie(@ApiParam(value = "id of the movie", required = true)
-                                               @PathVariable @Valid @Min(0) Long id) {
+                                                @PathVariable @Valid @Min(0) Long id) {
         return actorService.getActorsFromMovie(id);
     }
 
     @PostMapping
     @ApiOperation(value = "Add a new actor")
-    public ResponseEntity<String> addActor(@RequestBody @Valid ActorDto actorDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String addActor(@RequestBody @Valid ActorDto actorDto) {
         actorService.addActor(actorDto);
-        return new ResponseEntity<>("Actor added", HttpStatus.CREATED);
+        return "Actor added";
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Update an existing actor name")
-    public ResponseEntity<String> updateActorName(@ApiParam(value = "id of the actor you want to update", required = true)
-                                                  @PathVariable @Valid @Min(0) Long id, @RequestParam String name) {
+    @ResponseStatus(HttpStatus.OK)
+    public String updateActorName(@ApiParam(value = "id of the actor to update", required = true)
+                                  @PathVariable @Valid @Min(0) Long id, @RequestParam String name) {
         actorService.updateActorName(id, name);
-        return new ResponseEntity<>("Actor name updated", HttpStatus.OK);
+        return "Actor name updated";
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete an actor")
-    public ResponseEntity<String> deleteActor(@ApiParam(value = "id of the actor you want to delete", required = true)
-                                              @PathVariable @Valid @Min(0) Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteActor(@ApiParam(value = "id of the actor to delete", required = true)
+                              @PathVariable @Valid @Min(0) Long id) {
         actorService.deleteActor(id);
-        return new ResponseEntity<>("Actor deleted", HttpStatus.OK);
+        return "Actor deleted";
     }
 }

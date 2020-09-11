@@ -1,4 +1,4 @@
-package com.movies;
+package com.movies.graphs;
 
 import com.movies.graphs.Edge;
 import com.movies.graphs.Graph;
