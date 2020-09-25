@@ -4,6 +4,6 @@ import com.movies.graphs.Edge;
 
 public class DuplicateEdgeException extends RuntimeException {
     public DuplicateEdgeException(Edge edge) {
-        super("Duplicate edge: " + edge);
+        super(String.format("Duplicate edge: %s", edge));
     }
 }

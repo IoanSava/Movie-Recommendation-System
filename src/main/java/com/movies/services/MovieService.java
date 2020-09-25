@@ -11,10 +11,11 @@ import com.movies.exceptions.EntityNotFoundException;
 import com.movies.graphs.Edge;
 import com.movies.graphs.Graph;
 import com.movies.graphs.Node;
+import com.movies.mappers.MovieMapper;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieGenreRepository;
 import com.movies.repositories.MovieRepository;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,27 +24,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MovieService {
     private final MovieRepository movieRepository;
     private final ActorRepository actorRepository;
     private final MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final MovieMapper movieMapper;
 
-    public MovieService(MovieRepository movieRepository, ActorRepository actorRepository, MovieGenreRepository movieGenreRepository) {
-        this.movieRepository = movieRepository;
-        this.actorRepository = actorRepository;
-        this.movieGenreRepository = movieGenreRepository;
-    }
 
     public List<MovieDto> getAllMovies() {
         return movieRepository.findAll()
                 .stream()
-                .map(movie -> modelMapper.map(movie, MovieDto.class))
+                .map(movieMapper::movieToMovieDto)
                 .collect(Collectors.toList());
     }
 
     public void addMovie(MovieDto movieDto) {
-        movieRepository.save(modelMapper.map(movieDto, Movie.class));
+        movieRepository.save(movieMapper.movieDtoToMovie(movieDto));
     }
 
     public void updateMovieTitle(Long id, String title) {
@@ -61,7 +58,7 @@ public class MovieService {
 
         return actor.getMovies()
                 .stream()
-                .map(movie -> modelMapper.map(movie, MovieDto.class))
+                .map(movieMapper::movieToMovieDto)
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +67,7 @@ public class MovieService {
 
         return movieGenre.getMovies()
                 .stream()
-                .map(movie -> modelMapper.map(movie, MovieDto.class))
+                .map(movieMapper::movieToMovieDto)
                 .collect(Collectors.toList());
     }
 
@@ -145,7 +142,7 @@ public class MovieService {
         for (Node node : nodes) {
             Long movieId = node.getValue();
             Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new EntityNotFoundException("Movie", movieId));
-            recommendedMovies.add(modelMapper.map(movie, MovieDto.class));
+            recommendedMovies.add(movieMapper.movieToMovieDto(movie));
         }
 
         return recommendedMovies;

@@ -2,6 +2,6 @@ package com.movies.exceptions;
 
 public class ActorAlreadyAddedToMovieException extends RuntimeException {
     public ActorAlreadyAddedToMovieException(Long movieId, Long actorId) {
-        super("Actor with id " + actorId + " already added to movie with id " + movieId);
+        super(String.format("Actor with id %d already added to movie with id %d", actorId, movieId));
     }
 }

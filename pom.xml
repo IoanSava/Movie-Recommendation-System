@@ -21,9 +21,9 @@
 		<swagger-annotations.version>1.5.21</swagger-annotations.version>
 		<swagger-models.version>1.5.21</swagger-models.version>
 		<springfox-bean-validators.version>2.9.2</springfox-bean-validators.version>
-		<modelmapper.version>2.3.8</modelmapper.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+		<spring-boot-starter-test.version>2.3.4.RELEASE</spring-boot-starter-test.version>
 	</properties>
 
 	<dependencies>
@@ -93,11 +93,6 @@
 			<version>${springfox-bean-validators.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.modelmapper</groupId>
-			<artifactId>modelmapper</artifactId>
-			<version>${modelmapper.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>${validation-api.version}</version>
@@ -106,6 +101,12 @@
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<version>${spring-boot-starter-test.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

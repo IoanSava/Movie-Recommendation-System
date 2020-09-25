@@ -1,10 +1,10 @@
 package com.movies.services;
 
 import com.movies.dto.MovieGenreDto;
-import com.movies.entities.MovieGenre;
+import com.movies.mappers.MovieGenreMapper;
 import com.movies.repositories.MovieGenreRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,23 +12,20 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MovieGenreService {
     private final MovieGenreRepository movieGenreRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
-
-    public MovieGenreService(MovieGenreRepository movieGenreRepository) {
-        this.movieGenreRepository = movieGenreRepository;
-    }
+    private final MovieGenreMapper movieGenreMapper;
 
     public List<MovieGenreDto> getAllMovieGenres() {
         return movieGenreRepository.findAll()
                 .stream()
-                .map(movieGenre -> modelMapper.map(movieGenre, MovieGenreDto.class))
+                .map(movieGenreMapper::movieGenreToMovieGenreDto)
                 .collect(Collectors.toList());
     }
 
     public void addMovieGenre(MovieGenreDto movieGenreDto) {
-        movieGenreRepository.save(modelMapper.map(movieGenreDto, MovieGenre.class));
+        movieGenreRepository.save(movieGenreMapper.movieGenreDtoToMovieGenre(movieGenreDto));
         log.info("New genre added");
     }
 }

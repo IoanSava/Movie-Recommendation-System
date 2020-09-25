@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Range;
 public class MovieDto {
     private String title;
 
-    @Range(min = 1800, max = 2024)
+    @Range(min = 1880, max = 2025)
     private Long releaseYear;
 
     private MovieGenreDto genre;

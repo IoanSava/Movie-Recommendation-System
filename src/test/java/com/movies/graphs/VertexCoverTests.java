@@ -1,8 +1,5 @@
 package com.movies.graphs;
 
-import com.movies.graphs.Edge;
-import com.movies.graphs.Graph;
-import com.movies.graphs.Node;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
