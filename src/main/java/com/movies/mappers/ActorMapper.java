@@ -15,6 +15,7 @@ public final class ActorMapper {
 
     public ActorDto actorToActorDto(Actor actor) {
         ActorDto actorDto = new ActorDto();
+        actorDto.setId(actor.getId());
         actorDto.setName(actor.getName());
         actorDto.setAge(actor.getAge());
         return actorDto;

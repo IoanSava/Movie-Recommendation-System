@@ -3,6 +3,7 @@ package com.movies.entities;
 import lombok.Data;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class Movie {
     @NotNull(message = "title cannot be null")
     private String title;
 
+    @Column(name = "release_year")
     @NotNull(message = "releaseYear cannot be null")
     private Long releaseYear;
 
@@ -35,7 +37,7 @@ public class Movie {
     private MovieGenre genre;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "movie_actors", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "actor_id"))
+    @JoinTable(name = "movies_actors", joinColumns = @JoinColumn(name = "movie_id"), inverseJoinColumns = @JoinColumn(name = "actor_id"))
     private Set<Actor> actors = new HashSet<>();
 
     public void addActor(Actor actor) {

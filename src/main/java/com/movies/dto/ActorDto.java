@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 @Data
 @ApiModel(description = "Details about an actor")
 public class ActorDto {
+    private Long id;
     private String name;
 
     @Range(min = 1, max = 120)

@@ -20,6 +20,7 @@ public final class MovieMapper {
 
     public MovieDto movieToMovieDto(Movie movie) {
         MovieDto movieDto = new MovieDto();
+        movieDto.setId(movie.getId());
         movieDto.setTitle(movie.getTitle());
         movieDto.setReleaseYear(movie.getReleaseYear());
         movieDto.setGenre(movieGenreMapper.movieGenreToMovieGenreDto(movie.getGenre()));
