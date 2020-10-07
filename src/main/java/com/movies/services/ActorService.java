@@ -6,7 +6,7 @@ import com.movies.exceptions.EntityNotFoundException;
 import com.movies.mappers.ActorMapper;
 import com.movies.repositories.ActorRepository;
 import com.movies.repositories.MovieRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,11 +15,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class ActorService {
     private final ActorRepository actorRepository;
     private final MovieRepository movieRepository;
     private final ActorMapper actorMapper;
+    private final MovieService movieService;
+
+    public ActorService(ActorRepository actorRepository, MovieRepository movieRepository,
+                        ActorMapper actorMapper, @Lazy MovieService movieService) {
+        this.actorRepository = actorRepository;
+        this.movieRepository = movieRepository;
+        this.actorMapper = actorMapper;
+        this.movieService = movieService;
+    }
 
     public List<ActorDto> getAllActors() {
         return actorRepository.findAll()
@@ -48,6 +56,7 @@ public class ActorService {
 
     public void deleteActor(Long id) {
         actorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Actor", id));
+        movieService.getMoviesOfActor(id).forEach(movie -> movieService.removeActorFromMovie(movie.getId(), id));
         actorRepository.deleteById(id);
     }
 }

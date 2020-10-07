@@ -32,6 +32,7 @@ public class MovieService {
     private final ActorRepository actorRepository;
     private final MovieGenreRepository movieGenreRepository;
     private final MovieMapper movieMapper;
+    private final ActorService actorService;
 
 
     public List<MovieDto> getAllMovies() {
@@ -52,6 +53,7 @@ public class MovieService {
 
     public void deleteMovie(Long id) {
         movieRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Movie", id));
+        actorService.getActorsFromMovie(id).forEach(actor -> removeActorFromMovie(id, actor.getId()));
         movieRepository.deleteById(id);
     }
 
