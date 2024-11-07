@@ -22,7 +22,7 @@
 		<swagger-models.version>1.5.21</swagger-models.version>
 		<springfox-bean-validators.version>2.9.2</springfox-bean-validators.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
-		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+		<hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
 		<spring-boot-starter-test.version>2.3.4.RELEASE</spring-boot-starter-test.version>
 	</properties>
 
